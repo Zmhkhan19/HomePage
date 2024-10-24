@@ -45,6 +45,7 @@ import { SetStateAction, useState } from 'react';
          <Stack.Screen name='Screen1'>
            {props => <Screen1 {...props} Menu={Menu} setMenu={setMenu}  />}
          </Stack.Screen>
+
        </Stack.Navigator>
      </NavigationContainer>
    );
@@ -62,9 +63,6 @@ const Start: React.FC<StartProp>  = (props) => {
     setMenu(updatedItems); // Update Menu state
     setDishToDelete(''); // Clear the input after deletion
   };
-
-
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headingContainer}>
@@ -128,6 +126,7 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
   const { Menu, setMenu } = props;
   const { dish_Name, course_Type, dish_Discription, price } = props.route.params; 
   const [DishToDelete, setDishToDelete] = useState<string>('');
+  const [selectedCourseType, setSelectedCourseType] =  useState<string | null>(null);
 
   const handleDeleteItem = () => {
     const updatedItems = Menu.filter(item => item.dish_Name !== DishToDelete);
@@ -149,7 +148,7 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
       <View style={styles.listView}>
         <FlatList
           style={styles.ListStyle}
-          data={Menu}
+          data={selectedCourseType ? Menu.filter(item  => item.course_Type === selectedCourseType) : Menu}
           keyExtractor={(_item: any, index: { toString: () => any; }) => index.toString()}
           renderItem={({ item }) => (
             <View style={styles.container}>
@@ -188,6 +187,36 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
         >
           <Text style={styles.buttonText}>Add</Text>
         </TouchableHighlight>
+        <View style={styles.buttonContainer}>
+          <TouchableHighlight
+            style={styles.button}
+            onPress={() => setSelectedCourseType(null)} // Show all dishes
+          >
+
+            <Text style={styles.buttonText}>Show All Dishes</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={styles.button}
+            onPress={() => setSelectedCourseType('Appetizer')} // Filter for Appetizer
+          >
+            <Text style={styles.buttonText}>Show Appetizers</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.button}
+            onPress={() => setSelectedCourseType('Main')} // Filter for Main
+          >
+            <Text style={styles.buttonText}>Show Main Dishes</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.button}
+            onPress={() => setSelectedCourseType('Dessert')} // Filter for Dessert
+          >
+            <Text style={styles.buttonText}>Show Desserts</Text>
+          </TouchableHighlight>
+        </View>
+
+    
         </View>
       </View>
     </SafeAreaView>
@@ -277,6 +306,8 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
 };
 /** End of Screen 2 definition **/ 
 
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -285,6 +316,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   
+buttonContainer: {
+  flexDirection: 'row', // Arrange buttons in a row
+  justifyContent: 'space-around', // Space buttons evenly
+  alignItems: 'center', // Center buttons vertically
+  marginVertical: 10, // Add some vertical margin
+  paddingHorizontal: 10, // Add horizontal padding for better touch area
+},
 
   headingContainer: {
     backgroundColor: 'lightgreen',
