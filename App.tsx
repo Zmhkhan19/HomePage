@@ -278,6 +278,7 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
           {CourseType.map((courseType) => (
             <Picker.Item label={courseType} value={courseType} key={courseType} />
           ))}
+          
         </Picker>
         <TextInput
           style={styles.input}
