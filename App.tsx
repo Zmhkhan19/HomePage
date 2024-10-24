@@ -54,17 +54,70 @@ import { SetStateAction, useState } from 'react';
 
 
 const Start: React.FC<StartProp>  = (props) => { 
+  const { Menu, setMenu } = props;
+  const [DishToDelete, setDishToDelete] = useState<string>('');
+
+  const handleDeleteItem = () => {
+    const updatedItems = Menu.filter((item: { dish_Name: string; }) => item.dish_Name !== DishToDelete);
+    setMenu(updatedItems); // Update Menu state
+    setDishToDelete(''); // Clear the input after deletion
+  };
+
+
+
   return (
-    <View>
-         <TouchableHighlight
+    <SafeAreaView style={styles.container}>
+      <View style={styles.headingContainer}>
+        <Text style={styles.heading}>Home</Text>
+        <Text style={styles.trackerName}>Menu Items</Text>
+      </View>
+      <View style={styles.listView}>
+        <FlatList
+          style={styles.ListStyle}
+          data={Menu}
+          keyExtractor={(_item: any, index: { toString: () => any; }) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.container}>
+              <Text style={styles.dishName}>Dish Name: {item.dish_Name}</Text>
+              <Text style={styles.OtherDetails}>Description: {item.dish_Discription}</Text>
+              <Text style={styles.OtherDetails}>Course: {item.course_Type}</Text>
+              <Text style={styles.OtherDetails}>R{item.price}</Text>
+            </View>
+          )}
+        />
+            <View>
+        <Text style={styles.OtherDetails}>Total Dishes: </Text> 
+        <Text style={styles.OtherDetails}>Total Price: R</Text>
+        <Text style={styles.OtherDetails}>Average Price: R</Text>
+        
+    </View>
+
+        <View style={styles.userInputView}>
+          <Text style={styles.EnterDish}>Enter Dish Name Here</Text>
+          {/* Existing TextInputs for adding a new dish */}
+
+          {/* Input for deleting a dish */}
+          <TextInput
+            style={styles.input}
+            placeholder='Dish name to delete'
+            value={DishToDelete}
+            onChangeText={setDishToDelete}
+          />
+          <TouchableHighlight onPress={handleDeleteItem} style={styles.button}>
+            <Text style={styles.buttonText}>Delete</Text>
+          </TouchableHighlight>
+
+          <TouchableHighlight
           style={styles.button}
-          onPress={() => props.navigation.navigate('Screen1')}
+          onPress={() => props.navigation.navigate('Screen2')}
         >
           <Text style={styles.buttonText}>Add</Text>
         </TouchableHighlight>
+        </View>
       </View>
+    </SafeAreaView>
   );
-};
+          };
 
 
 
