@@ -15,4 +15,5 @@ export type RootStackParamList = {
         course_Type: string;
         price: string;}; //parameter that screen 2 is structured to receive   
          Screen2: undefined;
+         
     }

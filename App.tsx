@@ -47,6 +47,7 @@ import React from 'react';
            {props => <Screen1 {...props} Menu={Menu} setMenu={setMenu}  />}
          </Stack.Screen>
 
+      
        </Stack.Navigator>
      </NavigationContainer>
    );
@@ -58,6 +59,7 @@ import React from 'react';
 const Start: React.FC<StartProp>  = (props) => { 
   const { Menu, setMenu } = props;
   const [DishToDelete, setDishToDelete] = useState<string>('');
+  const [selectedCourseType, setSelectedCourseType] =  useState<string | null>(null);
 
   const handleDeleteItem = () => {
     const updatedItems = Menu.filter((item: { dish_Name: string; }) => item.dish_Name !== DishToDelete);
@@ -92,25 +94,43 @@ const Start: React.FC<StartProp>  = (props) => {
     </View>
 
         <View style={styles.userInputView}>
-          <Text style={styles.EnterDish}>Enter Dish Name Here</Text>
-          {/* Existing TextInputs for adding a new dish */}
 
-          {/* Input for deleting a dish */}
-          <TextInput
-            style={styles.input}
-            placeholder='Dish name to delete'
-            value={DishToDelete}
-            onChangeText={setDishToDelete}
-          />
-          <TouchableHighlight onPress={handleDeleteItem} style={styles.DeleteButton}>
-            <Text style={styles.DelButtonText}>Delete</Text>
+        
+          <TouchableHighlight
+            style={styles.DishButton}
+            onPress={() => setSelectedCourseType(null)} // Show all dishes
+          >
+
+            <Text style={styles.buttonText}>Show All Dishes</Text>
           </TouchableHighlight>
+<View style={styles.buttonContainer}>
+          <TouchableHighlight
+            style={styles.AppetizerButton}
+            onPress={() => setSelectedCourseType('Appetizer')} // Filter for Appetizer
+          >
+            <Text style={styles.buttonText}>Show Appetizers</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.MainButton}
+            onPress={() => setSelectedCourseType('Main')} // Filter for Main
+          >
+            <Text style={styles.buttonText}>Show Main Dishes</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.DessertButton}
+            onPress={() => setSelectedCourseType('Dessert')} // Filter for Dessert
+          >
+            <Text style={styles.buttonText}>Show Desserts</Text>
+          </TouchableHighlight>
+        </View>
+
+     
 
           <TouchableHighlight
           style={styles.button}
           onPress={() => props.navigation.navigate('Screen2')}
         >
-          <Text style={styles.buttonText}>Add</Text>
+          <Text style={styles.buttonText}>Add/Remove Dish</Text>
         </TouchableHighlight>
         </View>
       </View>
@@ -129,11 +149,6 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
   const [DishToDelete, setDishToDelete] = useState<string>('');
   const [selectedCourseType, setSelectedCourseType] =  useState<string | null>(null);
 
-  const handleDeleteItem = () => {
-    const updatedItems = Menu.filter(item => item.dish_Name !== DishToDelete);
-    setMenu(updatedItems); // Update Menu state
-    setDishToDelete(''); // Clear the input after deletion
-  };
 
   const totalDish = Menu.length; //holds the total amount of dishes in the list
   const totalPrice = Menu.reduce((acc, current) => acc + current.price, 0);
@@ -171,7 +186,7 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
 
         <View style={styles.userInputView}>
           
-        <View style={styles.buttonContainer}>
+        
           <TouchableHighlight
             style={styles.DishButton}
             onPress={() => setSelectedCourseType(null)} // Show all dishes
@@ -180,6 +195,7 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
             <Text style={styles.buttonText}>Show All Dishes</Text>
           </TouchableHighlight>
 
+          <View style={styles.buttonContainer}>
           <TouchableHighlight
             style={styles.AppetizerButton}
             onPress={() => setSelectedCourseType('Appetizer')} // Filter for Appetizer
@@ -199,25 +215,12 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
             <Text style={styles.buttonText}>Show Desserts</Text>
           </TouchableHighlight>
         </View>
-          <Text style={styles.EnterDish}>Enter Dish Name Here</Text>
-          {/* Existing TextInputs for adding a new dish */}
-
-          {/* Input for deleting a dish */}
-          <TextInput
-            style={styles.input}
-            placeholder='Dish name to delete'
-            value={DishToDelete}
-            onChangeText={setDishToDelete}
-          />
-          <TouchableHighlight onPress={handleDeleteItem} style={styles.DeleteButton}>
-            <Text style={styles.DelButtonText}>Delete</Text>
-          </TouchableHighlight>
 
           <TouchableHighlight
           style={styles.button}
           onPress={() => props.navigation.navigate('Screen2')}
         >
-          <Text style={styles.buttonText}>Add</Text>
+          <Text style={styles.buttonText}>Add/Remove Dish</Text>
         </TouchableHighlight>
        
 
@@ -237,8 +240,9 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
   const [Discription, setDiscription] = useState<string>(''); 
   const [courseType, setType] = useState<string>(''); 
   const [Price, setPrice] = useState<string>(''); 
-
+  const [DishToDelete, setDishToDelete] = useState<string>('');
   const CourseType = ['Appetizer', 'Main', 'Dessert'];
+
 
   const handleAdd = () => {
     if (DishName && Discription && courseType && Price) {
@@ -247,8 +251,9 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
         dish_Discription: Discription,
         course_Type: courseType,
         price: parseInt(Price)
-      };
+      }
       
+    
       setMenu([...Menu, newDish]); // Update Menu state
       setDishName('');
       setDiscription('');
@@ -259,6 +264,11 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
     }
   };
 
+  const handleDeleteItem = () => {
+        const updatedItems = Menu.filter(item => item.dish_Name !== DishToDelete);
+        setMenu(updatedItems); // Update Menu state
+        setDishToDelete(''); // Clear the input after deletion
+      }
   return (
     <SafeAreaView style={styles.itemContainer}>
       <View style={styles.userInputView}> 
@@ -295,6 +305,18 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
         <TouchableHighlight onPress={handleAdd} style={styles.button}>
           <Text style={styles.buttonText}>Add</Text>
         </TouchableHighlight>
+
+                 {/* Input for deleting a dish */}
+          <TextInput
+            style={styles.input}
+            placeholder='Dish name to delete'
+            value={DishToDelete}
+            onChangeText={setDishToDelete}
+          />
+          <TouchableHighlight onPress={handleDeleteItem} style={styles.DeleteButton}>
+            <Text style={styles.DelButtonText}>Delete</Text>
+          </TouchableHighlight>
+
         <TouchableOpacity
           style={styles.button}
           onPress={() => props.navigation.navigate('Screen1', { 
@@ -453,14 +475,14 @@ buttonContainer: {
   
   input: {
     width: '100%',
-    height: 40,
+    height: 50,
     backgroundColor: 'white',
     paddingHorizontal: 10,
     marginVertical: -15,
     borderRadius: 5,
     color: 'black',
     marginTop: 30,
-    fontSize: 20,
+    fontSize: 25,
   },
 
   button: {
@@ -495,7 +517,7 @@ buttonContainer: {
     marginVertical: 10,
    
     marginTop: 15,
-    marginLeft: -10
+    marginLeft: 20
   },
 
   AppetizerButton:{
@@ -504,7 +526,7 @@ buttonContainer: {
     marginVertical: 10,
     
     marginTop: 15,
-    marginLeft: 25
+    marginRight: 25
   },
 
   MainButton:{
@@ -513,7 +535,8 @@ buttonContainer: {
     marginVertical: 10,
    
     marginTop: 15,
-    marginLeft: 25
+    justifyContent: 'center'
+    
   },
 
   DessertButton:{
@@ -522,8 +545,8 @@ buttonContainer: {
     marginVertical: 10,
    
     marginTop: 15,
-    marginLeft: 25,
-    marginRight: -20
+    marginLeft: 25
+   
   },
 
   buttonText: {
