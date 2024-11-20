@@ -15,5 +15,8 @@ export type RootStackParamList = {
         course_Type: string;
         price: string;}; //parameter that screen 2 is structured to receive   
          Screen2: undefined;
-         
+         Screen3: {dish_Name :string; 
+            dish_Discription: string;
+            course_Type: string;
+            price: string;};
     }

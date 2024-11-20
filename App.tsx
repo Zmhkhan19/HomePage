@@ -47,7 +47,10 @@ import React from 'react';
            {props => <Screen1 {...props} Menu={Menu} setMenu={setMenu}  />}
          </Stack.Screen>
 
-      
+         <Stack.Screen name='Screen3'>
+           {props => <Screen3 {...props} Menu={Menu} setMenu={setMenu}  />}
+         </Stack.Screen>
+         
        </Stack.Navigator>
      </NavigationContainer>
    );
@@ -95,36 +98,18 @@ const Start: React.FC<StartProp>  = (props) => {
 
         <View style={styles.userInputView}>
 
-        
-          <TouchableHighlight
-            style={styles.DishButton}
-            onPress={() => setSelectedCourseType(null)} // Show all dishes
-          >
 
-            <Text style={styles.buttonText}>Show All Dishes</Text>
-          </TouchableHighlight>
-<View style={styles.buttonContainer}>
-          <TouchableHighlight
-            style={styles.AppetizerButton}
-            onPress={() => setSelectedCourseType('Appetizer')} // Filter for Appetizer
-          >
-            <Text style={styles.buttonText}>Show Appetizers</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.MainButton}
-            onPress={() => setSelectedCourseType('Main')} // Filter for Main
-          >
-            <Text style={styles.buttonText}>Show Main Dishes</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.DessertButton}
-            onPress={() => setSelectedCourseType('Dessert')} // Filter for Dessert
-          >
-            <Text style={styles.buttonText}>Show Desserts</Text>
-          </TouchableHighlight>
-        </View>
-
-     
+        <TouchableHighlight
+  style={styles.button}
+  onPress={() => props.navigation.navigate('Screen3', {
+    dish_Name: "", // Pass any required props here
+    dish_Discription: "",
+    course_Type: "",
+    price: 0,
+  })}
+>
+  <Text style={styles.buttonText}>Go to Filter List</Text>
+</TouchableHighlight>
 
           <TouchableHighlight
           style={styles.button}
@@ -187,35 +172,19 @@ const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: men
         <View style={styles.userInputView}>
           
         
-          <TouchableHighlight
-            style={styles.DishButton}
-            onPress={() => setSelectedCourseType(null)} // Show all dishes
-          >
-
-            <Text style={styles.buttonText}>Show All Dishes</Text>
-          </TouchableHighlight>
-
-          <View style={styles.buttonContainer}>
-          <TouchableHighlight
-            style={styles.AppetizerButton}
-            onPress={() => setSelectedCourseType('Appetizer')} // Filter for Appetizer
-          >
-            <Text style={styles.buttonText}>Show Appetizers</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.MainButton}
-            onPress={() => setSelectedCourseType('Main')} // Filter for Main
-          >
-            <Text style={styles.buttonText}>Show Main Dishes</Text>
-          </TouchableHighlight>
-          <TouchableHighlight
-            style={styles.DessertButton}
-            onPress={() => setSelectedCourseType('Dessert')} // Filter for Dessert
-          >
-            <Text style={styles.buttonText}>Show Desserts</Text>
-          </TouchableHighlight>
-        </View>
-
+          
+        
+        <TouchableHighlight
+  style={styles.button}
+  onPress={() => props.navigation.navigate('Screen3', {
+    dish_Name: "", // Pass any required props here
+    dish_Discription: "",
+    course_Type: "",
+    price: 0,
+  })}
+>
+  <Text style={styles.buttonText}>Go to Filter List</Text>
+</TouchableHighlight>
           <TouchableHighlight
           style={styles.button}
           onPress={() => props.navigation.navigate('Screen2')}
@@ -319,12 +288,23 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
 
         <TouchableOpacity
           style={styles.button}
-          onPress={() => props.navigation.navigate('Screen1', { 
+          onPress={() => {
+            const { navigation } = props;
+            navigation.navigate('Screen3', { 
             dish_Name: DishName, 
             dish_Discription: Discription,
             course_Type: courseType,
             price: Price 
-          })}
+          })
+
+           // After navigating to Screen1, immediately navigate to Screen3
+    navigation.navigate('Screen1', {
+      dish_Name: DishName,
+      dish_Discription: Discription,
+      course_Type: courseType,
+      price: Price,
+    });
+  }}    
         >
           <Text style={styles.buttonText}>View Menu</Text>
         </TouchableOpacity>
@@ -334,6 +314,105 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
 };
 /** End of Screen 2 definition **/ 
 
+/* Start of Screen 1 definition */
+type Screen3Prop = NativeStackScreenProps<RootStackParamList, 'Screen3'>;
+const Screen3: React.FC<Screen3Prop & { Menu: menuDetails[], setMenu: (menu: menuDetails []) => void }> = (props) => {
+  const { Menu, setMenu } = props;
+  const { dish_Name, course_Type, dish_Discription, price } = props.route.params; 
+  const [selectedCourseType, setSelectedCourseType] =  useState<string | null>(null);
+
+
+  const totalDish = Menu.length; //holds the total amount of dishes in the list
+  const totalPrice = Menu.reduce((acc, current) => acc + current.price, 0);
+  const AvgPrice = totalDish > 0 ? Math.ceil(totalPrice / totalDish): 0;
+
+  return ( 
+  <SafeAreaView style={styles.container}>
+      <View style={styles.headingContainer}>
+        <Text style={styles.heading}>Home</Text>
+        <Text style={styles.trackerName}>Menu Items</Text>
+      </View>
+      <View style={styles.listView}>
+        <FlatList
+          style={styles.ListStyle}
+          data={selectedCourseType ? Menu.filter(item  => item.course_Type === selectedCourseType) : Menu}
+          keyExtractor={(_item: any, index: { toString: () => any; }) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.container}>
+              <Text style={styles.dishName}>Dish Name: {item.dish_Name}</Text>
+              <Text style={styles.OtherDetails}>Description: {item.dish_Discription}</Text>
+              <Text style={styles.OtherDetails}>Course: {item.course_Type}</Text>
+              <Text style={styles.OtherDetails}>R{item.price}</Text>
+            </View>
+          )}
+        />
+            <View>
+        <Text style={styles.OtherDetails}>Total Dishes: {totalDish}</Text> 
+        <Text style={styles.OtherDetails}>Total Price: R{totalPrice}</Text>
+        <Text style={styles.OtherDetails}>Average Price: R{AvgPrice}</Text>
+        
+    </View>
+  
+
+
+    <View style={styles.userInputView}>
+          
+        
+          <TouchableHighlight
+            style={styles.DishButton}
+            onPress={() => setSelectedCourseType(null)} // Show all dishes
+          >
+
+            <Text style={styles.buttonText}>Show All Dishes</Text>
+          </TouchableHighlight>
+
+          <View style={styles.buttonContainer}>
+          <TouchableHighlight
+            style={styles.AppetizerButton}
+            onPress={() => setSelectedCourseType('Appetizer')} // Filter for Appetizer
+          >
+            <Text style={styles.buttonText}>Show Appetizers</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.MainButton}
+            onPress={() => setSelectedCourseType('Main')} // Filter for Main
+          >
+            <Text style={styles.buttonText}>Show Main Dishes</Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={styles.DessertButton}
+            onPress={() => setSelectedCourseType('Dessert')} // Filter for Dessert
+          >
+            <Text style={styles.buttonText}>Show Desserts</Text>
+          </TouchableHighlight>
+        </View>
+
+          <TouchableHighlight
+          style={styles.button}
+          onPress={() => props.navigation.navigate('Screen2')}
+        >
+          <Text style={styles.buttonText}>Add/Remove Dish</Text>
+        </TouchableHighlight>
+       
+        <TouchableHighlight
+  style={styles.button}
+  onPress={() => props.navigation.navigate('Screen1', {
+    dish_Name: "", // Pass any required props here
+    dish_Discription: "",
+    course_Type: "",
+    price: 0,
+  })}
+>
+  <Text style={styles.buttonText}>Go to Screen 1</Text>
+</TouchableHighlight>
+
+    
+        </View>
+      </View>
+    </SafeAreaView>
+  );
+          };
+          // export default HomeScreen;
 
 
 const styles = StyleSheet.create({
@@ -475,7 +554,7 @@ buttonContainer: {
   
   input: {
     width: '100%',
-    height: 50,
+    height: 55,
     backgroundColor: 'white',
     paddingHorizontal: 10,
     marginVertical: -15,
