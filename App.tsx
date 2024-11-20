@@ -8,25 +8,12 @@ import { RootStackParamList, menuDetails } from './types';
 import { SetStateAction, useState } from 'react';
 import React from 'react';
 
-// import Home from './Pages/Home';
-// import Add from './Pages/Add';
-
-
-
-
-// const Stack = createNativeStackNavigator<RootStackParamList>(); 
-// const App = () => {
-//   return (
-//     <NavigationContainer>
-//       <Stack.Navigator initialRouteName="Home">
-//         <Stack.Screen name="Add" component={Add} />
-//         </Stack.Navigator>
-//         </NavigationContainer>
-//         );
-//         };
-
-//         export default App;
-
+// Code Attribution:
+// Varsity College. 2024
+// Mobile  App Scripting MAST5112/d/p/w MODULE MANUAL 
+//  IIE (The Independent Institute of Education) 
+//  https://advtechonline.sharepoint.com/:w:/r/sites/TertiaryStudents/_layouts/15/Doc.aspx?sourcedoc=%7B8B4938D0-6B6B-44E4-A2D8-5551E6D3AE27%7D&file=MAST5112MM.docx&action=default&mobileredirect=true
+// Accessed 25 October 2024 
         
  export default function App() {
    const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -61,14 +48,7 @@ import React from 'react';
 
 const Start: React.FC<StartProp>  = (props) => { 
   const { Menu, setMenu } = props;
-  const [DishToDelete, setDishToDelete] = useState<string>('');
-  const [selectedCourseType, setSelectedCourseType] =  useState<string | null>(null);
-
-  const handleDeleteItem = () => {
-    const updatedItems = Menu.filter((item: { dish_Name: string; }) => item.dish_Name !== DishToDelete);
-    setMenu(updatedItems); // Update Menu state
-    setDishToDelete(''); // Clear the input after deletion
-  };
+ 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.headingContainer}>
@@ -131,7 +111,7 @@ type Screen1Prop = NativeStackScreenProps<RootStackParamList, 'Screen1'>;
 const Screen1: React.FC<Screen1Prop & { Menu: menuDetails[], setMenu: (menu: menuDetails []) => void }> = (props) => {
   const { Menu, setMenu } = props;
   const { dish_Name, course_Type, dish_Discription, price } = props.route.params; 
-  const [DishToDelete, setDishToDelete] = useState<string>('');
+
   const [selectedCourseType, setSelectedCourseType] =  useState<string | null>(null);
 
 
@@ -314,7 +294,7 @@ const Screen2: React.FC<Screen2Prop & { Menu: menuDetails[], setMenu: (menu: men
 };
 /** End of Screen 2 definition **/ 
 
-/* Start of Screen 1 definition */
+/* Start of Screen 3 definition */
 type Screen3Prop = NativeStackScreenProps<RootStackParamList, 'Screen3'>;
 const Screen3: React.FC<Screen3Prop & { Menu: menuDetails[], setMenu: (menu: menuDetails []) => void }> = (props) => {
   const { Menu, setMenu } = props;
@@ -412,7 +392,7 @@ const Screen3: React.FC<Screen3Prop & { Menu: menuDetails[], setMenu: (menu: men
     </SafeAreaView>
   );
           };
-          // export default HomeScreen;
+        
 
 
 const styles = StyleSheet.create({
